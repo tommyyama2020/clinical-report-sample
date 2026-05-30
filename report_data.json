@@ -1,0 +1,220 @@
+{
+  "patient": {
+    "name": "Jane Smith",
+    "age": 54,
+    "sex": "F",
+    "dob": "1971-03-12",
+    "mrn": "MRN-0048219"
+  },
+  "sample": {
+    "sample_id": "TUM-2024-04821",
+    "tumor_type": "Non-small cell lung cancer",
+    "tumor_purity": 72,
+    "panel": "Solid tumor panel v4.1",
+    "sequencing_date": "2026-05-22",
+    "report_date": "2026-05-28",
+    "ordering_physician": "Dr. K. Tanaka",
+    "institution": "Sanger Cancer Center"
+  },
+  "summary": {
+    "tmb": 12.4,
+    "tmb_unit": "mut/Mb",
+    "tmb_interpretation": "Intermediate",
+    "msi_status": "MSS",
+    "msi_interpretation": "Microsatellite stable",
+    "total_variants": 4,
+    "pathogenic_count": 3,
+    "vus_count": 1,
+    "actionable_count": 3
+  },
+  "variants": [
+    {
+      "gene": "EGFR",
+      "hgvs_p": "p.L858R",
+      "hgvs_c": "c.2573T>G",
+      "chromosome": "Chr7",
+      "position": "55,191,822",
+      "exon": "Exon 21",
+      "variant_type": "missense",
+      "cosmic_id": "COSV55497715",
+      "cosmic_id_legacy": "COSM6224",
+      "cosmic_frequency_pct": 43.0,
+      "cosmic_samples_positive": 1842,
+      "cosmic_samples_total": 4280,
+      "cosmic_gene_role": "Oncogene",
+      "cosmic_census_tier": 1,
+      "cosmic_cmc_score": 0.98,
+      "clinvar_classification": "Pathogenic",
+      "clinvar_stars": 5,
+      "clinvar_submitters": 14,
+      "vaf_pct": 38.2,
+      "coverage": 1240,
+      "resistance_flags": [
+        "T790M secondary mutation confers resistance to 1st/2nd gen EGFR-TKIs — osimertinib preferred"
+      ],
+      "treatments": [
+        {
+          "drug": "Osimertinib (Tagrisso)",
+          "evidence_level": "1",
+          "context": "EGFR L858R · NSCLC 1L/2L · FDA approved 2018",
+          "status": "FDA approved"
+        },
+        {
+          "drug": "Erlotinib / Gefitinib",
+          "evidence_level": "1",
+          "context": "EGFR L858R · 1G TKI · resistance risk with T790M co-mutation",
+          "status": "FDA approved"
+        },
+        {
+          "drug": "Amivantamab + lazertinib",
+          "evidence_level": "2A",
+          "context": "Post-osimertinib progression · NCT04080836",
+          "status": "Clinical trial"
+        }
+      ],
+      "patient_summary": "A change in the EGFR gene was found. This is one of the most common and well-studied mutations in lung cancer. Targeted therapies are specifically designed to block this mutation. Your doctor will discuss the most suitable option."
+    },
+    {
+      "gene": "TP53",
+      "hgvs_p": "p.R248W",
+      "hgvs_c": "c.742C>T",
+      "chromosome": "Chr17",
+      "position": "7,674,220",
+      "exon": "Exon 7",
+      "variant_type": "missense",
+      "cosmic_id": "COSV52765807",
+      "cosmic_id_legacy": null,
+      "cosmic_frequency_pct": 3.1,
+      "cosmic_samples_positive": 133,
+      "cosmic_samples_total": 4280,
+      "cosmic_gene_role": "Tumor suppressor",
+      "cosmic_census_tier": 1,
+      "cosmic_cmc_score": 0.91,
+      "clinvar_classification": "Pathogenic",
+      "clinvar_stars": 5,
+      "clinvar_submitters": 22,
+      "vaf_pct": 61.8,
+      "coverage": 980,
+      "resistance_flags": [],
+      "treatments": [
+        {
+          "drug": "APR-246 (Eprenetapopt)",
+          "evidence_level": "3",
+          "context": "TP53 gain-of-function mutations · phase II/III trials",
+          "status": "Investigational"
+        },
+        {
+          "drug": "Immunotherapy consideration",
+          "evidence_level": "2B",
+          "context": "TP53 co-mutation may increase IO response in EGFR+ NSCLC — emerging data",
+          "status": "Data emerging"
+        }
+      ],
+      "patient_summary": "A change in the TP53 gene was found. TP53 normally helps protect cells from becoming cancerous. While no drug specifically targets this change yet, it helps your doctor understand your cancer and choose the best treatment."
+    },
+    {
+      "gene": "STK11",
+      "hgvs_p": "p.Q369*",
+      "hgvs_c": "c.1105C>T",
+      "chromosome": "Chr19",
+      "position": "1,221,464",
+      "exon": "Exon 8",
+      "variant_type": "nonsense",
+      "cosmic_id": "COSV56781203",
+      "cosmic_id_legacy": null,
+      "cosmic_frequency_pct": 8.4,
+      "cosmic_samples_positive": 360,
+      "cosmic_samples_total": 4280,
+      "cosmic_gene_role": "Tumor suppressor",
+      "cosmic_census_tier": 1,
+      "cosmic_cmc_score": 0.87,
+      "clinvar_classification": "Pathogenic",
+      "clinvar_stars": 4,
+      "clinvar_submitters": 9,
+      "vaf_pct": 44.1,
+      "coverage": 860,
+      "resistance_flags": [
+        "STK11 loss associated with reduced PD-L1 immunotherapy response in NSCLC"
+      ],
+      "treatments": [
+        {
+          "drug": "Pembrolizumab — reduced benefit",
+          "evidence_level": "2A",
+          "context": "STK11 loss associated with IO resistance; consider combination strategies",
+          "status": "Caution"
+        },
+        {
+          "drug": "SHP2 inhibitor combination",
+          "evidence_level": "2B",
+          "context": "Pre-clinical + early clinical data in STK11-null KRAS-co-mutant NSCLC",
+          "status": "Investigational"
+        }
+      ],
+      "patient_summary": "A change in the STK11 gene was detected. This gene normally helps regulate cell growth. This finding may influence which treatment your doctor recommends, particularly regarding immunotherapy."
+    },
+    {
+      "gene": "KEAP1",
+      "hgvs_p": "p.R272C",
+      "hgvs_c": "c.814C>T",
+      "chromosome": "Chr19",
+      "position": "10,486,351",
+      "exon": "Exon 4",
+      "variant_type": "missense",
+      "cosmic_id": "COSV99102841",
+      "cosmic_id_legacy": null,
+      "cosmic_frequency_pct": 1.2,
+      "cosmic_samples_positive": 51,
+      "cosmic_samples_total": 4280,
+      "cosmic_gene_role": "Tumor suppressor",
+      "cosmic_census_tier": 1,
+      "cosmic_cmc_score": 0.44,
+      "clinvar_classification": "VUS",
+      "clinvar_stars": 2,
+      "clinvar_submitters": 4,
+      "vaf_pct": 22.3,
+      "coverage": 1100,
+      "resistance_flags": [],
+      "treatments": [
+        {
+          "drug": "No approved therapy",
+          "evidence_level": "3",
+          "context": "KEAP1/NRF2 pathway is an emerging target. May affect oxidative stress and chemotherapy sensitivity.",
+          "status": "Emerging"
+        }
+      ],
+      "patient_summary": "A change in the KEAP1 gene was found. At this time, there is not enough evidence to know whether this change causes cancer or is harmless — we call this a 'variant of uncertain significance.' Your doctor will monitor this finding and update you if new research sheds light on it."
+    }
+  ],
+  "mutational_signatures": [
+    {
+      "signature": "SBS4",
+      "name": "Tobacco smoking",
+      "aetiology": "Associated with tobacco carcinogens; C>A transversions",
+      "contribution_pct": 58
+    },
+    {
+      "signature": "SBS2",
+      "name": "APOBEC activity",
+      "aetiology": "Cytidine deaminase activity; C>T at TCA/TCT context",
+      "contribution_pct": 24
+    },
+    {
+      "signature": "SBS1",
+      "name": "Age-related",
+      "aetiology": "Spontaneous deamination of 5-methylcytosine",
+      "contribution_pct": 12
+    },
+    {
+      "signature": "SBS13",
+      "name": "APOBEC activity",
+      "aetiology": "Paired with SBS2; C>G at TCA/TCT context",
+      "contribution_pct": 6
+    }
+  ],
+  "data_sources": {
+    "somatic_variants": "COSMIC v99 (commercial license)",
+    "variant_classification": "ClinVar 2026-05 (NCBI)",
+    "actionability": "OncoKB v4.x + CIViC (accessed 2026-05-28)",
+    "population_frequency": "gnomAD v4.1"
+  }
+}
