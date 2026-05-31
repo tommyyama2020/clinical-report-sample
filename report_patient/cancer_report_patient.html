@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genomic Cancer Report — Jane Smith (Patient view)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#F7F5F0;color:#1A1816;font-size:15px;line-height:1.65}
+  .page{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}
+  .report-title{font-family:'DM Serif Display',serif;font-size:28px;font-weight:400;line-height:1.2}
+  .header-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem 2rem;margin-top:1.5rem;padding-top:1.5rem;border-top:.5px solid rgba(26,24,22,.1)}
+  .meta-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9A9590;margin-bottom:2px}
+  .meta-value{font-weight:500;font-size:14px}
+  .summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
+  .sum-card{background:#fff;border:.5px solid #DEDAD4;border-radius:10px;padding:14px 16px}
+  .sum-label{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#9A9590;margin-bottom:6px}
+  .sum-value{font-size:22px;font-weight:500;line-height:1}
+  .sum-sub{font-size:12px;color:#5A5650;margin-top:4px}
+  .section{margin-bottom:2.5rem}
+  .sec-hdr{display:flex;align-items:baseline;gap:10px;margin-bottom:1rem;padding-bottom:8px;border-bottom:.5px solid #DEDAD4}
+  .sec-title{font-size:17px;font-weight:500}
+  .badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;letter-spacing:.04em}
+  .v-card{background:#fff;border:.5px solid #DEDAD4;border-radius:12px;margin-bottom:12px;overflow:hidden}
+  .v-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:.5px solid #DEDAD4}
+  .gene-badge{font-size:13px;font-weight:600;color:#fff;padding:4px 12px;border-radius:6px;white-space:nowrap;min-width:70px;text-align:center}
+  .v-body{padding:14px 18px}
+  .dc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:10px}
+  .dc{}
+  .dc-l{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#9A9590;margin-bottom:3px}
+  .dc-v{font-size:13px;font-weight:600}
+  .dc-s{font-size:11px;color:#5A5650}
+  .tx-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:.5px solid #DEDAD4;font-size:13px}
+  .tx-row:last-child{border-bottom:none}
+  .sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .sig-card{background:#fff;border:.5px solid #DEDAD4;border-radius:10px;padding:14px 16px}
+  .view-badge{display:inline-block;background:#1A3A2A;color:#fff;font-size:11px;font-weight:500;padding:3px 10px;border-radius:5px;margin-bottom:1rem}
+  .disclaimer{margin-top:2rem;padding:14px 18px;border:.5px solid #DEDAD4;border-radius:10px;font-size:11px;color:#9A9590;line-height:1.7}
+  .footer-note{text-align:center;font-size:11px;color:#9A9590;margin-top:1rem;padding-top:1rem;border-top:.5px solid #DEDAD4}
+  @media print{.view-badge{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div style="border-bottom:1.5px solid #1A1816;padding-bottom:1.5rem;margin-bottom:2rem">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+      <div>
+        <h1 class="report-title">Genomic Cancer Report</h1>
+        <p style="color:#5A5650;font-size:13px;margin-top:4px">Comprehensive somatic mutation analysis · Solid tumor panel v4.1</p>
+      </div>
+      <span class="view-badge">👤 Patient view</span>
+    </div>
+    <div class="header-meta">
+      <div><div class="meta-label">Patient</div><div class="meta-value">Jane Smith, 54F</div></div>
+      <div><div class="meta-label">Sample ID</div><div class="meta-value">TUM-2024-04821</div></div>
+      <div><div class="meta-label">Tumor type</div><div class="meta-value">Non-small cell lung cancer</div></div>
+      <div><div class="meta-label">Report date</div><div class="meta-value">2026-05-28</div></div>
+      <div><div class="meta-label">Ordering physician</div><div class="meta-value">Dr. K. Tanaka</div></div>
+      <div><div class="meta-label">Tumor purity</div><div class="meta-value">72%</div></div>
+    </div>
+  </div>
+
+  <div class="summary-strip">
+    <div class="sum-card"><div class="sum-label">Variants detected</div>
+      <div class="sum-value">4</div>
+      <div class="sum-sub">3 pathogenic · 1 VUS</div></div>
+    <div class="sum-card"><div class="sum-label">Actionable variants</div>
+      <div class="sum-value" style="color:#2D6B4A">3</div>
+      <div class="sum-sub">FDA-approved therapies available</div></div>
+    <div class="sum-card"><div class="sum-label">TMB</div>
+      <div class="sum-value">12.4</div>
+      <div class="sum-sub">mut/Mb · Intermediate</div></div>
+    <div class="sum-card"><div class="sum-label">MSI status</div>
+      <div class="sum-value">MSS</div>
+      <div class="sum-sub">Microsatellite stable</div></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-hdr">
+      <span class="sec-title">Detected variants</span>
+      <span class="badge" style="background:#EEEDFE;color:#3C3489">COSMIC</span>
+      <span class="badge" style="background:#E6F1FB;color:#185FA5">ClinVar</span>
+      <span class="badge" style="background:#EAF3DE;color:#3B6D11">OncoKB/CIViC</span>
+    </div>
+    
+        <div class="v-card">
+          <div class="v-header">
+            <span class="gene-badge" style="background:#1A3A2A">EGFR</span>
+            <div>
+              <div style="font-family:monospace;font-weight:700;font-size:14px">p.L858R (c.2573T>G)</div>
+              <div style="font-size:11px;color:#9A9590">Chr7:55,191,822 · Exon 21 · missense</div>
+            </div>
+            <span style="display:inline-block;background:#FCEBEB;color:#A32D2D;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap">Pathogenic</span>
+          </div>
+          <div class="v-body">
+            <div class="dc-grid">
+        <div class="dc"><div class="dc-l">COSMIC ID</div>
+          <div class="dc-v">COSV55497715</div>
+          <div class="dc-s">COSM6224</div></div>
+        <div class="dc"><div class="dc-l">FREQUENCY IN TUMOR TYPE</div>
+          <div class="dc-v">~43.0%</div>
+          <div style="height:6px;background:#F0EDE6;border-radius:3px;margin:4px 0 2px"><div style="width:43.0%;height:100%;background:#2D6B4A;border-radius:3px"></div></div>
+          <div class="dc-s">1,842 / 4,280 samples</div></div>
+        <div class="dc"><div class="dc-l">ClinVar</div>
+          <div class="dc-v" style="color:#A32D2D">Pathogenic</div>
+          <div class="dc-s">★★★★★ · 14 submitters</div></div>
+        </div>
+            <div style="background:#FCEBEB;border-radius:5px;padding:7px 12px;margin:10px 0;font-size:12px;color:#A32D2D;font-weight:500">⚠ T790M secondary mutation confers resistance to 1st/2nd gen EGFR-TKIs — osimertinib preferred</div>
+            <div style="background:#E6EFE9;border-left:3px solid #2D6B4A;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.6;color:#1A3A2A"><strong>What this means for you:</strong> A change in the EGFR gene was found. This is one of the most common and well-studied mutations in lung cancer. Targeted therapies are specifically designed to block this mutation. Your doctor will discuss the most suitable option.</div>
+            <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid #DEDAD4">
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#9A9590;margin-bottom:8px">
+                Treatment options
+                <span style="background:#EAF3DE;color:#3B6D11;font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;font-weight:600">OncoKB/CIViC</span>
+              </div>
+              
+            <div class="tx-row">
+              <span style="display:inline-block;background:#EAF3DE;color:#3B6D11;font-size:11px;font-weight:600;padding:2px 9px;border-radius:4px;white-space:nowrap">1</span>
+              <div style="flex:1">
+                <div style="font-weight:600;font-size:13px">Osimertinib (Tagrisso)</div>
+                <div style="font-size:11px;color:#5A5650">EGFR L858R · NSCLC 1L/2L · FDA approved 2018</div>
+              </div>
+              <div style="font-size:11px;color:#9A9590;white-space:nowrap">FDA approved</div>
+            </div>
+            <div class="tx-row">
+              <span style="display:inline-block;background:#EAF3DE;color:#3B6D11;font-size:11px;font-weight:600;padding:2px 9px;border-radius:4px;white-space:nowrap">1</span>
+              <div style="flex:1">
+                <div style="font-weight:600;font-size:13px">Erlotinib / Gefitinib</div>
+                <div style="font-size:11px;color:#5A5650">EGFR L858R · 1G TKI · resistance risk with T790M co-mutation</div>
+              </div>
+              <div style="font-size:11px;color:#9A9590;white-space:nowrap">FDA approved</div>
+            </div>
+            <div class="tx-row">
+              <span style="display:inline-block;background:#E6F1FB;color:#185FA5;font-size:11px;font-weight:600;padding:2px 9px;border-radius:4px;white-space:nowrap">2A</span>
+              <div style="flex:1">
+                <div style="font-weight:600;font-size:13px">Amivantamab + lazertinib</div>
+                <div style="font-size:11px;color:#5A5650">Post-osimertinib progression · NCT04080836</div>
+              </div>
+              <div style="font-size:11px;color:#9A9590;white-space:nowrap">Clinical trial</div>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="v-card">
+          <div class="v-header">
+            <span class="gene-badge" style="background:#1A3A2A">TP53</span>
+            <div>
+              <div style="font-family:monospace;font-weight:700;font-size:14px">p.R248W (c.742C>T)</div>
+              <div style="font-size:11px;color:#9A9590">Chr17:7,674,220 · Exon 7 · missense</div>
+            </div>
+            <span style="display:inline-block;background:#FCEBEB;color:#A32D2D;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap">Pathogenic</span>
+          </div>
+          <div class="v-body">
+            <div class="dc-grid">
+        <div class="dc"><div class="dc-l">COSMIC ID</div>
+          <div class="dc-v">COSV52765807</div>
+          <div class="dc-s"></div></div>
+        <div class="dc"><div class="dc-l">FREQUENCY IN TUMOR TYPE</div>
+          <div class="dc-v">~3.1%</div>
+          <div style="height:6px;background:#F0EDE6;border-radius:3px;margin:4px 0 2px"><div style="width:3.1%;height:100%;background:#2D6B4A;border-radius:3px"></div></div>
+          <div class="dc-s">133 / 4,280 samples</div></div>
+        <div class="dc"><div class="dc-l">ClinVar</div>
+          <div class="dc-v" style="color:#A32D2D">Pathogenic</div>
+          <div class="dc-s">★★★★★ · 22 submitters</div></div>
+        </div>
+            
+            <div style="background:#E6EFE9;border-left:3px solid #2D6B4A;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.6;color:#1A3A2A"><strong>What this means for you:</strong> A change in the TP53 gene was found. TP53 normally helps protect cells from becoming cancerous. While no drug specifically targets this change yet, it helps your doctor understand your cancer and choose the best treatment.</div>
+            <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid #DEDAD4">
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#9A9590;margin-bottom:8px">
+                Treatment options
+                <span style="background:#EAF3DE;color:#3B6D11;font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;font-weight:600">OncoKB/CIViC</span>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="v-card">
+          <div class="v-header">
+            <span class="gene-badge" style="background:#1A3A2A">STK11</span>
+            <div>
+              <div style="font-family:monospace;font-weight:700;font-size:14px">p.Q369* (c.1105C>T)</div>
+              <div style="font-size:11px;color:#9A9590">Chr19:1,221,464 · Exon 8 · nonsense</div>
+            </div>
+            <span style="display:inline-block;background:#FCEBEB;color:#A32D2D;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap">Pathogenic</span>
+          </div>
+          <div class="v-body">
+            <div class="dc-grid">
+        <div class="dc"><div class="dc-l">COSMIC ID</div>
+          <div class="dc-v">COSV56781203</div>
+          <div class="dc-s"></div></div>
+        <div class="dc"><div class="dc-l">FREQUENCY IN TUMOR TYPE</div>
+          <div class="dc-v">~8.4%</div>
+          <div style="height:6px;background:#F0EDE6;border-radius:3px;margin:4px 0 2px"><div style="width:8.4%;height:100%;background:#2D6B4A;border-radius:3px"></div></div>
+          <div class="dc-s">360 / 4,280 samples</div></div>
+        <div class="dc"><div class="dc-l">ClinVar</div>
+          <div class="dc-v" style="color:#A32D2D">Pathogenic</div>
+          <div class="dc-s">★★★★☆ · 9 submitters</div></div>
+        </div>
+            <div style="background:#FCEBEB;border-radius:5px;padding:7px 12px;margin:10px 0;font-size:12px;color:#A32D2D;font-weight:500">⚠ STK11 loss associated with reduced PD-L1 immunotherapy response in NSCLC</div>
+            <div style="background:#E6EFE9;border-left:3px solid #2D6B4A;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.6;color:#1A3A2A"><strong>What this means for you:</strong> A change in the STK11 gene was detected. This gene normally helps regulate cell growth. This finding may influence which treatment your doctor recommends, particularly regarding immunotherapy.</div>
+            <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid #DEDAD4">
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#9A9590;margin-bottom:8px">
+                Treatment options
+                <span style="background:#EAF3DE;color:#3B6D11;font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;font-weight:600">OncoKB/CIViC</span>
+              </div>
+              
+            <div class="tx-row">
+              <span style="display:inline-block;background:#E6F1FB;color:#185FA5;font-size:11px;font-weight:600;padding:2px 9px;border-radius:4px;white-space:nowrap">2A</span>
+              <div style="flex:1">
+                <div style="font-weight:600;font-size:13px">Pembrolizumab — reduced benefit</div>
+                <div style="font-size:11px;color:#5A5650">STK11 loss associated with IO resistance; consider combination strategies</div>
+              </div>
+              <div style="font-size:11px;color:#9A9590;white-space:nowrap">Caution</div>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="v-card">
+          <div class="v-header">
+            <span class="gene-badge" style="background:#888780">KEAP1</span>
+            <div>
+              <div style="font-family:monospace;font-weight:700;font-size:14px">p.R272C (c.814C>T)</div>
+              <div style="font-size:11px;color:#9A9590">Chr19:10,486,351 · Exon 4 · missense</div>
+            </div>
+            <span style="display:inline-block;background:#F1EFE8;color:#5F5E5A;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;white-space:nowrap">VUS</span>
+          </div>
+          <div class="v-body">
+            <div class="dc-grid">
+        <div class="dc"><div class="dc-l">COSMIC ID</div>
+          <div class="dc-v">COSV99102841</div>
+          <div class="dc-s"></div></div>
+        <div class="dc"><div class="dc-l">FREQUENCY IN TUMOR TYPE</div>
+          <div class="dc-v">~1.2%</div>
+          <div style="height:6px;background:#F0EDE6;border-radius:3px;margin:4px 0 2px"><div style="width:1.2%;height:100%;background:#2D6B4A;border-radius:3px"></div></div>
+          <div class="dc-s">51 / 4,280 samples</div></div>
+        <div class="dc"><div class="dc-l">ClinVar</div>
+          <div class="dc-v" style="color:#5F5E5A">VUS</div>
+          <div class="dc-s">★★☆☆☆ · 4 submitters</div></div>
+        </div>
+            
+            <div style="background:#E6EFE9;border-left:3px solid #2D6B4A;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.6;color:#1A3A2A"><strong>What this means for you:</strong> A change in the KEAP1 gene was found. At this time, there is not enough evidence to know whether this change causes cancer or is harmless — we call this a &#x27;variant of uncertain significance.&#x27; Your doctor will monitor this finding and update you if new research sheds light on it.</div>
+            <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid #DEDAD4">
+              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#9A9590;margin-bottom:8px">
+                Treatment options
+                <span style="background:#EAF3DE;color:#3B6D11;font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;font-weight:600">OncoKB/CIViC</span>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+  </div>
+
+  
+  
+        <div class="section">
+          <div class="sec-hdr"><span class="sec-title">What these results mean for you</span></div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="background:#E6EFE9;border-left:3px solid #2D6B4A;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px;line-height:1.6;color:#1A3A2A">
+              <strong>3 actionable findings:</strong> Three of the four changes found in your tumour have treatments available or in clinical trials. Your doctor will review these with you.
+            </div>
+            <div style="background:#E6F1FB;border-left:3px solid #185FA5;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px;line-height:1.6;color:#185FA5">
+              <strong>1 uncertain finding:</strong> One change (KEAP1) does not yet have enough evidence to say whether it matters. No immediate action is needed.
+            </div>
+            <div style="background:#F1EFE8;border-left:3px solid #888780;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px;line-height:1.6;color:#5A5650">
+              <strong>Next steps:</strong> Your doctor, Dr. K. Tanaka, will discuss these findings with you at your next appointment.
+            </div>
+          </div>
+        </div>
+  
+
+  <div style="margin-top:1rem;padding-top:1rem;border-top:.5px solid #DEDAD4;font-size:11px;color:#9A9590">
+    <strong style="color:#1A1816">Data sources:</strong> <strong>Somatic Variants:</strong> COSMIC v99 (commercial license) &nbsp;·&nbsp; <strong>Variant Classification:</strong> ClinVar 2026-05 (NCBI) &nbsp;·&nbsp; <strong>Actionability:</strong> OncoKB v4.x + CIViC (accessed 2026-05-28) &nbsp;·&nbsp; <strong>Population Frequency:</strong> gnomAD v4.1
+  </div>
+
+  <div class="disclaimer">
+    <strong style="color:#1A1816">Disclaimer:</strong>
+    This report is provided for informational and research purposes only.
+    COSMIC data is used under commercial license and is not approved for clinical decision-making as a standalone resource.
+    All treatment decisions must be made by a qualified oncologist in conjunction with full clinical context.
+    Variant interpretations reflect current evidence as of report date and may change as new data emerge.
+    This sample report contains illustrative data only — no real patient data is included.
+  </div>
+
+  <div class="footer-note">
+    CONFIDENTIAL — PATIENT VIEW &nbsp;·&nbsp; TUM-2024-04821 &nbsp;·&nbsp; For research use only
+  </div>
+
+</div>
+</body>
+</html>

@@ -1044,37 +1044,20 @@ def generate_html(json_path: str, view: str = "clinician", out_path: str = None)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate cancer genomic report from JSON")
-    parser.add_argument("json", nargs="?", default=None,
-                        help="Path to a single JSON file, or omit to process all files in json/ folder")
-    parser.add_argument("--view", choices=["clinician", "patient", "both"], default="both",
-                        help="Report view: clinician, patient, or both. Default: both")
+    parser.add_argument("json",   help="Path to report JSON file")
+    parser.add_argument("--view", choices=["clinician", "patient"], default="clinician",
+                        help="Report view: clinician (full) or patient (plain language). Default: clinician")
     parser.add_argument("--format", choices=["pdf", "html", "both"], default="both",
                         help="Output format: pdf, html, or both. Default: both")
+    parser.add_argument("--out",  default=None,
+                        help="Output path (without extension). Default: cancer_report_<id>_<view>")
     args = parser.parse_args()
 
-    # Collect JSON files to process
-    if args.json:
-        json_files = [Path(args.json)]
-    else:
-        json_folder = Path("json")
-        if not json_folder.exists():
-            print("✗ No 'json' folder found and no file specified.")
-            sys.exit(1)
-        json_files = sorted(json_folder.glob("*.json"))
-        if not json_files:
-            print("✗ No JSON files found in json/ folder.")
-            sys.exit(1)
+    folder = "report_clinician" if args.view == "clinician" else "report_patient"
+    Path(folder).mkdir(parents=True, exist_ok=True)
+    base = args.out or str(Path(folder) / f"cancer_report_{args.view}")
 
-    views = ["clinician", "patient"] if args.view == "both" else [args.view]
-
-    for json_path in json_files:
-        sample_id = json_path.stem
-        print(f"\n── Processing {json_path} ──")
-        for view in views:
-            folder = Path("report_clinician" if view == "clinician" else "report_patient")
-            folder.mkdir(parents=True, exist_ok=True)
-            base = str(folder / sample_id)
-            if args.format in ("pdf", "both"):
-                generate_report(str(json_path), view, base + ".pdf")
-            if args.format in ("html", "both"):
-                generate_html(str(json_path), view, base + ".html")
+    if args.format in ("pdf", "both"):
+        generate_report(args.json, args.view, base + ".pdf")
+    if args.format in ("html", "both"):
+        generate_html(args.json, args.view, base + ".html")
