@@ -154,7 +154,7 @@ def freq_bar_table(pct, width=60):
 def build_header(data):
     p, s_ = data["patient"], data["sample"]
     story = []
-    story.append(Paragraph("Genomic Cancer Report", S_TITLE))
+    story.append(Paragraph("Clinical Report", S_TITLE))
     story.append(Paragraph(
         f"Comprehensive somatic mutation analysis &nbsp;·&nbsp; {s_['panel']}", S_SUBTITLE))
     story.append(Spacer(1, 6))
