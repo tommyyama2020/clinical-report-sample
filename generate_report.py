@@ -1,6 +1,6 @@
 """
 generate_report.py
-Cancer Genomic Clinical Report Generator
+Cancer Clinical Report Generator
 Usage: python generate_report.py report_data.json [--view clinician|patient] [--out report.pdf]
 """
 
@@ -688,14 +688,19 @@ def generate_report(json_path: str, view: str = "clinician", out_path: str = Non
 
     sample_id = data["sample"]["sample_id"]
     if out_path is None:
-        out_path = f"cancer_report_{sample_id}_{view}.pdf"
+        folder = Path("report_clinician") if view == "clinician" else Path("report_patient")
+        folder.mkdir(parents=True, exist_ok=True)
+        out_path = folder / f"cancer_report_{sample_id}_{view}.pdf"
+    else:
+        out_path = Path(out_path)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
 
     doc = SimpleDocTemplate(
-        out_path,
+        str(out_path),
         pagesize=A4,
         leftMargin=MARGIN, rightMargin=MARGIN,
         topMargin=16 * mm, bottomMargin=20 * mm,
-        title=f"Genomic Cancer Report — {data['patient']['name']}",
+        title=f" Clinical Report — {data['patient']['name']}",
         author=data["sample"]["ordering_physician"],
     )
 
