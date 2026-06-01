@@ -1,14 +1,12 @@
 """
 generate_report.py
-Cancer Genomic Clinical Report Generator
-Usage:
-  python generate_report.py report_data.json [--view clinician|patient] [--format pdf|html|both] [--out output]
+Clinical Report Generator
+Usage: python generate_report.py report_data.json [--view clinician|patient] [--out report.pdf]
 """
 
 import json
 import sys
 import argparse
-import html as html_mod
 from pathlib import Path
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
@@ -153,7 +151,7 @@ def freq_bar_table(pct, width=60):
 
 def build_header(data):
     p, s_ = data["patient"], data["sample"]
-    story = []
+    story =[
     story.append(Paragraph("Clinical Report", S_TITLE))
     story.append(Paragraph(
         f"Comprehensive somatic mutation analysis &nbsp;·&nbsp; {s_['panel']}", S_SUBTITLE))
@@ -697,7 +695,7 @@ def generate_report(json_path: str, view: str = "clinician", out_path: str = Non
         pagesize=A4,
         leftMargin=MARGIN, rightMargin=MARGIN,
         topMargin=16 * mm, bottomMargin=20 * mm,
-        title=f"Genomic Cancer Report — {data['patient']['name']}",
+        title=f" Clinical Report — {data['patient']['name']}",
         author=data["sample"]["ordering_physician"],
     )
 
@@ -719,362 +717,12 @@ def generate_report(json_path: str, view: str = "clinician", out_path: str = Non
     return out_path
 
 
-# ── HTML Generator ────────────────────────────────────────────────────────────
-
-def _ev_colors_html(ev):
-    m = {"1": ("#EAF3DE","#3B6D11"), "2A": ("#E6F1FB","#185FA5"),
-         "2B": ("#E6F1FB","#185FA5"), "3": ("#FAEEDA","#854F0B"), "R": ("#FCEBEB","#A32D2D")}
-    return m.get(ev, ("#F1EFE8","#5F5E5A"))
-
-def _cls_colors_html(cls):
-    m = {"Pathogenic": ("#FCEBEB","#A32D2D"), "Likely pathogenic": ("#FAEEDA","#854F0B"),
-         "VUS": ("#F1EFE8","#5F5E5A"), "Benign": ("#EAF3DE","#3B6D11")}
-    return m.get(cls, ("#F1EFE8","#5F5E5A"))
-
-def _stars(n):
-    return "★" * n + "☆" * (5 - n)
-
-def _freq_bar(pct, color="#2D6B4A"):
-    return (f'<div style="height:6px;background:#F0EDE6;border-radius:3px;margin:4px 0 2px">'
-            f'<div style="width:{min(pct,100)}%;height:100%;background:{color};border-radius:3px"></div></div>')
-
-def _pill(text, bg, fg, radius="20px"):
-    return (f'<span style="display:inline-block;background:{bg};color:{fg};font-size:11px;'
-            f'font-weight:600;padding:2px 9px;border-radius:{radius};white-space:nowrap">{text}</span>')
-
-def _resistance_flag(text):
-    return (f'<div style="background:#FCEBEB;border-radius:5px;padding:7px 12px;'
-            f'margin:10px 0;font-size:12px;color:#A32D2D;font-weight:500">⚠ {text}</div>')
-
-def _plain_box(text):
-    return (f'<div style="background:#E6EFE9;border-left:3px solid #2D6B4A;border-radius:0 8px 8px 0;'
-            f'padding:10px 14px;margin:10px 0;font-size:13px;line-height:1.6;color:#1A3A2A">'
-            f'<strong>What this means for you:</strong> {html_mod.escape(text)}</div>')
-
-def _sig_bar(pct, color):
-    return (f'<div style="height:8px;background:#F0EDE6;border-radius:4px;margin:6px 0">'
-            f'<div style="width:{pct}%;height:100%;background:{color};border-radius:4px"></div></div>')
-
-def generate_html(json_path: str, view: str = "clinician", out_path: str = None) -> str:
-    with open(json_path) as f:
-        data = json.load(f)
-
-    p   = data["patient"]
-    s   = data["sample"]
-    sm  = data["summary"]
-    ds  = data.get("data_sources", {})
-
-    sample_id = s["sample_id"]
-    if out_path is None:
-        out_path = f"cancer_report_{sample_id}_{view}.html"
-
-    is_clinician = view == "clinician"
-
-    # ── Variants HTML ──
-    variants_html = ""
-    for v in data["variants"]:
-        cls           = v["clinvar_classification"]
-        cls_bg, cls_fg = _cls_colors_html(cls)
-        gene_bg       = "#1A3A2A" if cls != "VUS" else "#888780"
-        freq_pct      = v["cosmic_frequency_pct"]
-
-        # data grid
-        grid_cells = f"""
-        <div class="dc"><div class="dc-l">COSMIC ID</div>
-          <div class="dc-v">{v['cosmic_id']}</div>
-          <div class="dc-s">{v.get('cosmic_id_legacy') or ''}</div></div>
-        <div class="dc"><div class="dc-l">FREQUENCY IN TUMOR TYPE</div>
-          <div class="dc-v">~{freq_pct}%</div>
-          {_freq_bar(freq_pct)}
-          <div class="dc-s">{v['cosmic_samples_positive']:,} / {v['cosmic_samples_total']:,} samples</div></div>
-        <div class="dc"><div class="dc-l">ClinVar</div>
-          <div class="dc-v" style="color:{cls_fg}">{cls}</div>
-          <div class="dc-s">{_stars(v['clinvar_stars'])} · {v['clinvar_submitters']} submitters</div></div>
-        """
-        if is_clinician:
-            grid_cells += f"""
-        <div class="dc"><div class="dc-l">VAF (TUMOR)</div>
-          <div class="dc-v">{v['vaf_pct']}%</div>
-          <div class="dc-s">coverage {v['coverage']:,}×</div></div>
-        <div class="dc"><div class="dc-l">GENE ROLE</div>
-          <div class="dc-v">{v['cosmic_gene_role']}</div>
-          <div class="dc-s">Census Tier {v['cosmic_census_tier']}</div></div>
-        <div class="dc"><div class="dc-l">CMC SCORE</div>
-          <div class="dc-v">{v['cosmic_cmc_score']:.2f}</div>
-          <div class="dc-s">driver confidence</div></div>
-            """
-
-        # resistance flags
-        flags_html = "".join(_resistance_flag(f) for f in v.get("resistance_flags", []))
-
-        # patient plain language
-        plain_html = _plain_box(v["patient_summary"]) if not is_clinician and v.get("patient_summary") else ""
-
-        # treatments
-        treatments = v.get("treatments", [])
-        if not is_clinician:
-            treatments = [t for t in treatments if t["evidence_level"] in ("1", "2A")]
-        tx_rows = ""
-        for tx in treatments:
-            ev = tx["evidence_level"]
-            ev_bg, ev_fg = _ev_colors_html(ev)
-            tx_rows += f"""
-            <div class="tx-row">
-              {_pill(ev, ev_bg, ev_fg, "4px")}
-              <div style="flex:1">
-                <div style="font-weight:600;font-size:13px">{html_mod.escape(tx['drug'])}</div>
-                <div style="font-size:11px;color:#5A5650">{html_mod.escape(tx['context'])}</div>
-              </div>
-              <div style="font-size:11px;color:#9A9590;white-space:nowrap">{tx['status']}</div>
-            </div>"""
-
-        variants_html += f"""
-        <div class="v-card">
-          <div class="v-header">
-            <span class="gene-badge" style="background:{gene_bg}">{v['gene']}</span>
-            <div>
-              <div style="font-family:monospace;font-weight:700;font-size:14px">{v['hgvs_p']} ({v['hgvs_c']})</div>
-              <div style="font-size:11px;color:#9A9590">{v['chromosome']}:{v['position']} · {v['exon']} · {v['variant_type']}</div>
-            </div>
-            {_pill(cls, cls_bg, cls_fg)}
-          </div>
-          <div class="v-body">
-            <div class="dc-grid">{grid_cells}</div>
-            {flags_html}
-            {plain_html}
-            <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid #DEDAD4">
-              <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#9A9590;margin-bottom:8px">
-                Treatment options
-                <span style="background:#EAF3DE;color:#3B6D11;font-size:9px;padding:1px 6px;border-radius:3px;margin-left:6px;font-weight:600">OncoKB/CIViC</span>
-              </div>
-              {tx_rows}
-            </div>
-          </div>
-        </div>"""
-
-    # ── Signatures HTML ──
-    sig_colors = {"SBS4": "#854F0B", "SBS2": "#185FA5", "SBS1": "#888780", "SBS13": "#185FA5"}
-    sigs_html = ""
-    if is_clinician:
-        sig_cards = ""
-        for sig in data.get("mutational_signatures", []):
-            color = sig_colors.get(sig["signature"], "#888780")
-            sig_cards += f"""
-            <div class="sig-card">
-              <div style="font-weight:600;font-size:13px;margin-bottom:3px">{sig['signature']} — {sig['name']}</div>
-              <div style="font-size:11px;color:#5A5650;margin-bottom:8px">{html_mod.escape(sig['aetiology'])}</div>
-              {_sig_bar(sig['contribution_pct'], color)}
-              <div style="font-size:14px;font-weight:600;color:{color}">{sig['contribution_pct']}%</div>
-            </div>"""
-        sigs_html = f"""
-        <div class="section">
-          <div class="sec-hdr"><span class="sec-title">Mutational signatures</span>
-            <span class="badge" style="background:#EEEDFE;color:#3C3489">COSMIC</span></div>
-          <div class="sig-grid">{sig_cards}</div>
-          <p style="font-size:12px;color:#5A5650;margin-top:10px">
-            Dominant tobacco signature (SBS4) consistent with smoking history.
-            APOBEC signatures (SBS2/13) suggest ongoing mutational processes — may influence immunotherapy response.
-          </p>
-        </div>"""
-
-    # ── Patient summary section ──
-    patient_section = ""
-    if not is_clinician:
-        patient_section = f"""
-        <div class="section">
-          <div class="sec-hdr"><span class="sec-title">What these results mean for you</span></div>
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div style="background:#E6EFE9;border-left:3px solid #2D6B4A;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px;line-height:1.6;color:#1A3A2A">
-              <strong>3 actionable findings:</strong> Three of the four changes found in your tumour have treatments available or in clinical trials. Your doctor will review these with you.
-            </div>
-            <div style="background:#E6F1FB;border-left:3px solid #185FA5;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px;line-height:1.6;color:#185FA5">
-              <strong>1 uncertain finding:</strong> One change (KEAP1) does not yet have enough evidence to say whether it matters. No immediate action is needed.
-            </div>
-            <div style="background:#F1EFE8;border-left:3px solid #888780;border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px;line-height:1.6;color:#5A5650">
-              <strong>Next steps:</strong> Your doctor, {html_mod.escape(s['ordering_physician'])}, will discuss these findings with you at your next appointment.
-            </div>
-          </div>
-        </div>"""
-
-    # ── Evidence legend ──
-    legend_html = ""
-    if is_clinician:
-        levels = [("1","FDA-recognized biomarker in this tumor type"),
-                  ("2A","Standard care biomarker in another tumor type"),
-                  ("3","Clinical evidence in this tumor type (early)"),
-                  ("R","Known resistance to therapy")]
-        ev_items = ""
-        for code, desc in levels:
-            ev_bg, ev_fg = _ev_colors_html(code)
-            ev_items += f'<div style="display:flex;gap:8px;align-items:flex-start">{_pill(code, ev_bg, ev_fg, "4px")}<span style="font-size:12px;color:#5A5650">{desc}</span></div>'
-        legend_html = f"""
-        <div class="section">
-          <div class="sec-hdr"><span class="sec-title">Evidence level guide</span>
-            <span class="badge" style="background:#EAF3DE;color:#3B6D11">OncoKB</span></div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">{ev_items}</div>
-        </div>"""
-
-    # ── Data sources ──
-    ds_items = " &nbsp;·&nbsp; ".join(
-        f"<strong>{k.replace('_',' ').title()}:</strong> {html_mod.escape(v)}"
-        for k, v in ds.items())
-
-    # ── Full HTML ──
-    view_label = "Clinician" if is_clinician else "Patient"
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Genomic Cancer Report — {html_mod.escape(p['name'])} ({view_label} view)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
-  body{{font-family:'DM Sans',sans-serif;background:#F7F5F0;color:#1A1816;font-size:15px;line-height:1.65}}
-  .page{{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}}
-  .report-title{{font-family:'DM Serif Display',serif;font-size:28px;font-weight:400;line-height:1.2}}
-  .header-meta{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem 2rem;margin-top:1.5rem;padding-top:1.5rem;border-top:.5px solid rgba(26,24,22,.1)}}
-  .meta-label{{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9A9590;margin-bottom:2px}}
-  .meta-value{{font-weight:500;font-size:14px}}
-  .summary-strip{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}}
-  .sum-card{{background:#fff;border:.5px solid #DEDAD4;border-radius:10px;padding:14px 16px}}
-  .sum-label{{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#9A9590;margin-bottom:6px}}
-  .sum-value{{font-size:22px;font-weight:500;line-height:1}}
-  .sum-sub{{font-size:12px;color:#5A5650;margin-top:4px}}
-  .section{{margin-bottom:2.5rem}}
-  .sec-hdr{{display:flex;align-items:baseline;gap:10px;margin-bottom:1rem;padding-bottom:8px;border-bottom:.5px solid #DEDAD4}}
-  .sec-title{{font-size:17px;font-weight:500}}
-  .badge{{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;letter-spacing:.04em}}
-  .v-card{{background:#fff;border:.5px solid #DEDAD4;border-radius:12px;margin-bottom:12px;overflow:hidden}}
-  .v-header{{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:.5px solid #DEDAD4}}
-  .gene-badge{{font-size:13px;font-weight:600;color:#fff;padding:4px 12px;border-radius:6px;white-space:nowrap;min-width:70px;text-align:center}}
-  .v-body{{padding:14px 18px}}
-  .dc-grid{{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:10px}}
-  .dc{{}}
-  .dc-l{{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#9A9590;margin-bottom:3px}}
-  .dc-v{{font-size:13px;font-weight:600}}
-  .dc-s{{font-size:11px;color:#5A5650}}
-  .tx-row{{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:.5px solid #DEDAD4;font-size:13px}}
-  .tx-row:last-child{{border-bottom:none}}
-  .sig-grid{{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
-  .sig-card{{background:#fff;border:.5px solid #DEDAD4;border-radius:10px;padding:14px 16px}}
-  .view-badge{{display:inline-block;background:#1A3A2A;color:#fff;font-size:11px;font-weight:500;padding:3px 10px;border-radius:5px;margin-bottom:1rem}}
-  .disclaimer{{margin-top:2rem;padding:14px 18px;border:.5px solid #DEDAD4;border-radius:10px;font-size:11px;color:#9A9590;line-height:1.7}}
-  .footer-note{{text-align:center;font-size:11px;color:#9A9590;margin-top:1rem;padding-top:1rem;border-top:.5px solid #DEDAD4}}
-  @media print{{.view-badge{{display:none}}}}
-</style>
-</head>
-<body>
-<div class="page">
-
-  <div style="border-bottom:1.5px solid #1A1816;padding-bottom:1.5rem;margin-bottom:2rem">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
-      <div>
-        <h1 class="report-title">Genomic Cancer Report</h1>
-        <p style="color:#5A5650;font-size:13px;margin-top:4px">Comprehensive somatic mutation analysis · {html_mod.escape(s['panel'])}</p>
-      </div>
-      <span class="view-badge">{'🔬 Clinician view' if is_clinician else '👤 Patient view'}</span>
-    </div>
-    <div class="header-meta">
-      <div><div class="meta-label">Patient</div><div class="meta-value">{html_mod.escape(p['name'])}, {p['age']}{p['sex']}</div></div>
-      <div><div class="meta-label">Sample ID</div><div class="meta-value">{html_mod.escape(sample_id)}</div></div>
-      <div><div class="meta-label">Tumor type</div><div class="meta-value">{html_mod.escape(s['tumor_type'])}</div></div>
-      <div><div class="meta-label">Report date</div><div class="meta-value">{html_mod.escape(s['report_date'])}</div></div>
-      <div><div class="meta-label">Ordering physician</div><div class="meta-value">{html_mod.escape(s['ordering_physician'])}</div></div>
-      <div><div class="meta-label">Tumor purity</div><div class="meta-value">{s['tumor_purity']}%</div></div>
-    </div>
-  </div>
-
-  <div class="summary-strip">
-    <div class="sum-card"><div class="sum-label">Variants detected</div>
-      <div class="sum-value">{sm['total_variants']}</div>
-      <div class="sum-sub">{sm['pathogenic_count']} pathogenic · {sm['vus_count']} VUS</div></div>
-    <div class="sum-card"><div class="sum-label">Actionable variants</div>
-      <div class="sum-value" style="color:#2D6B4A">{sm['actionable_count']}</div>
-      <div class="sum-sub">FDA-approved therapies available</div></div>
-    <div class="sum-card"><div class="sum-label">TMB</div>
-      <div class="sum-value">{sm['tmb']}</div>
-      <div class="sum-sub">{sm['tmb_unit']} · {sm['tmb_interpretation']}</div></div>
-    <div class="sum-card"><div class="sum-label">MSI status</div>
-      <div class="sum-value">{sm['msi_status']}</div>
-      <div class="sum-sub">{sm['msi_interpretation']}</div></div>
-  </div>
-
-  <div class="section">
-    <div class="sec-hdr">
-      <span class="sec-title">Detected variants</span>
-      <span class="badge" style="background:#EEEDFE;color:#3C3489">COSMIC</span>
-      <span class="badge" style="background:#E6F1FB;color:#185FA5">ClinVar</span>
-      <span class="badge" style="background:#EAF3DE;color:#3B6D11">OncoKB/CIViC</span>
-    </div>
-    {variants_html}
-  </div>
-
-  {sigs_html}
-  {patient_section}
-  {legend_html}
-
-  <div style="margin-top:1rem;padding-top:1rem;border-top:.5px solid #DEDAD4;font-size:11px;color:#9A9590">
-    <strong style="color:#1A1816">Data sources:</strong> {ds_items}
-  </div>
-
-  <div class="disclaimer">
-    <strong style="color:#1A1816">Disclaimer:</strong>
-    This report is provided for informational and research purposes only.
-    COSMIC data is used under commercial license and is not approved for clinical decision-making as a standalone resource.
-    All treatment decisions must be made by a qualified oncologist in conjunction with full clinical context.
-    Variant interpretations reflect current evidence as of report date and may change as new data emerge.
-    This sample report contains illustrative data only — no real patient data is included.
-  </div>
-
-  <div class="footer-note">
-    CONFIDENTIAL — {view_label.upper()} VIEW &nbsp;·&nbsp; {html_mod.escape(sample_id)} &nbsp;·&nbsp; For research use only
-  </div>
-
-</div>
-</body>
-</html>"""
-
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"✓ HTML report written → {out_path}")
-    return out_path
-
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate cancer genomic report from JSON")
-    parser.add_argument("json", nargs="?", default=None,
-                        help="Path to a single JSON file, or omit to process all files in json/ folder")
-    parser.add_argument("--view", choices=["clinician", "patient", "both"], default="both",
-                        help="Report view: clinician, patient, or both. Default: both")
-    parser.add_argument("--format", choices=["pdf", "html", "both"], default="both",
-                        help="Output format: pdf, html, or both. Default: both")
+    parser = argparse.ArgumentParser(description="Generate cancer genomic report PDF from JSON")
+    parser.add_argument("json",  help="Path to report JSON file")
+    parser.add_argument("--view", choices=["clinician", "patient"], default="clinician",
+                        help="Report view: clinician (full) or patient (plain language). Default: clinician")
+    parser.add_argument("--out",  default=None,
+                        help="Output PDF path. Default: cancer_report_<id>_<view>.pdf")
     args = parser.parse_args()
-
-    # Collect JSON files to process
-    if args.json:
-        json_files = [Path(args.json)]
-    else:
-        json_folder = Path("json")
-        if not json_folder.exists():
-            print("✗ No 'json' folder found and no file specified.")
-            sys.exit(1)
-        json_files = sorted(json_folder.glob("*.json"))
-        if not json_files:
-            print("✗ No JSON files found in json/ folder.")
-            sys.exit(1)
-
-    views = ["clinician", "patient"] if args.view == "both" else [args.view]
-
-    for json_path in json_files:
-        sample_id = json_path.stem
-        print(f"\n── Processing {json_path} ──")
-        for view in views:
-            folder = Path("report_clinician" if view == "clinician" else "report_patient")
-            folder.mkdir(parents=True, exist_ok=True)
-            base = str(folder / sample_id)
-            if args.format in ("pdf", "both"):
-                generate_report(str(json_path), view, base + ".pdf")
-            if args.format in ("html", "both"):
-                generate_html(str(json_path), view, base + ".html")
+    generate_report(args.json, args.view, args.out)
